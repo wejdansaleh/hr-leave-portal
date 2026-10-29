@@ -26,7 +26,7 @@ def save(employee_id: str, data: dict) -> dict:
     table.put_item(Item=item)
     return item
 
-    def get(employee_id: str) -> dict | None:
+def get(employee_id: str) -> dict | None:
     response = table.get_item(Key={"PK": "USER", "SK": employee_id})
     return response.get("Item")
 

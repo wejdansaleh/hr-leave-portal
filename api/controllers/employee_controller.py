@@ -1,4 +1,3 @@
-from fastapi import APIRouter
 from fastapi import APIRouter, HTTPException
 
 from models import EmployeeIn
