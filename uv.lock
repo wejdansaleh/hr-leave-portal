@@ -109,6 +109,7 @@ source = { editable = "." }
 dependencies = [
     { name = "aws-cdk-lib" },
     { name = "constructs" },
+    { name = "mangum" },
 ]
 
 [package.dev-dependencies]
@@ -120,6 +121,7 @@ dev = [
 requires-dist = [
     { name = "aws-cdk-lib", specifier = ">=2.273.0,<3.0.0" },
     { name = "constructs", specifier = ">=10.5.0,<11.0.0" },
+    { name = "mangum", specifier = ">=0.22.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -149,6 +151,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/33/c3/0a0165c7258dce26244e32469f13bdbada8bbda2eb2924c9318140ef9731/jsii-1.142.0.tar.gz", hash = "sha256:2fe1c5f2a5a405a5fbaaafb8b362cdf6a30171589e508c01682f33c5d529172f", size = 523956, upload-time = "2026-10-20T08:47:29.207Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/16/98/36c81719866db47c7b049d2ea4a180bcbdabf84919bc1d94d1f927f9f00d/jsii-1.142.0-py3-none-any.whl", hash = "sha256:16d6b3e25bbaa081dd39eabe910b07f646fe4988302d8aae401690f247baf7df", size = 506963, upload-time = "2026-10-20T08:47:27.512Z" },
+]
+
+[[package]]
+name = "mangum"
+version = "0.22.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/82/c8/1579c705908d02a4526a748e8d0f0419151d4498c59033840f5df3a14822/mangum-0.22.0.tar.gz", hash = "sha256:701936891aaed8ed66479b871c2bda87ba288fd01c7d5dd6ba6c8e9ba1c239d1", size = 118290, upload-time = "2026-08-22T12:54:48.396Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ca/a2/21ee5d457ae79a2587ff0d4652990670b7cac84ba0eaab6e6865a3bd2515/mangum-0.22.0-py3-none-any.whl", hash = "sha256:a0595e3cc7a8091b22d8b3997bab5b2ad6aae7a5e40865e19c2015f5c959a93b", size = 17143, upload-time = "2026-08-22T12:54:46.924Z" },
 ]
 
 [[package]]
