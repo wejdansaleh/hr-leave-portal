@@ -1,5 +1,6 @@
 import os
 import uuid
+from boto3.dynamodb.conditions import Key
 
 import boto3
 
@@ -24,3 +25,12 @@ def save(employee_id: str, data: dict) -> dict:
     }
     table.put_item(Item=item)
     return item
+
+    def get(employee_id: str) -> dict | None:
+    response = table.get_item(Key={"PK": "USER", "SK": employee_id})
+    return response.get("Item")
+
+
+def list_all() -> list[dict]:
+    response = table.query(KeyConditionExpression=Key("PK").eq("USER"))
+    return response["Items"]
