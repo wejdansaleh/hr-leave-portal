@@ -17,3 +17,4 @@ class LeaveIn(BaseModel):
 class LeaveUpdate(BaseModel):
     endDate: date
     note: str = ""
+
