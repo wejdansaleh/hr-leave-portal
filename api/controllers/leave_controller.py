@@ -1,28 +1,32 @@
-from fastapi import APIRouter
-from fastapi import APIRouter, Query
-from models import LeaveIn
-from services import leave_service
+from fastapi import APIRouter, HTTPException
 from datetime import date
-from models import LeaveIn, LeaveUpdate
+from models import EmployeeIn
+from services import employee_service
+
+router = APIRouter(tags=["employees"])
 
 
-router = APIRouter(tags=["leave"])
+@router.post("/employees", status_code=201)
+def create_employee(payload: EmployeeIn):
+    return employee_service.create(payload.model_dump(mode="json"))
 
 
-@router.post("/employees/{employee_id}/leave", status_code=201)
-def create_leave(employee_id: str, payload: LeaveIn):
-    body = payload.model_dump(mode="json")
-    return leave_service.save(employee_id, body["startDate"], body)
+@router.get("/employees")
+def list_employees(hiredFrom: date | None = None, hiredTo: date | None = None):
+    if hiredFrom and hiredTo:
+        return {
+            "employees": employee_service.list_by_hire_date(
+                hiredFrom.isoformat(), hiredTo.isoformat()
+            )
+        }
+
+    return {"employees": employee_service.list_all()}
 
 
-@router.get("/employees/{employee_id}/leave")
-def list_leave(
-    employee_id: str, month: str | None = Query(default=None, pattern=r"^\d{4}-\d{2}$")
-):
-    return {"leave": leave_service.list_for_employee(employee_id, month)}
+@router.get("/employees/{employee_id}")
+def get_employee(employee_id: str):
+    employee = employee_service.get(employee_id)
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
 
-@router.put("/employees/{employee_id}/leave/{start_date}")
-def save_leave(employee_id: str, start_date: date, payload: LeaveUpdate):
-    return leave_service.save(
-        employee_id, start_date.isoformat(), payload.model_dump(mode="json")
-    )
+    return employee

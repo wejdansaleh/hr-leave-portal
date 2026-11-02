@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter, HTTPException
 
 from models import EmployeeIn
@@ -8,17 +10,43 @@ router = APIRouter(tags=["employees"])
 
 @router.post("/employees", status_code=201)
 def create_employee(payload: EmployeeIn):
-    return employee_service.create(payload.model_dump(mode="json"))
+    return employee_service.create(
+        payload.model_dump(mode="json")
+    )
 
 
 @router.get("/employees")
-def list_employees():
+def list_employees(
+    hiredFrom: date | None = None,
+    hiredTo: date | None = None,
+):
+    if hiredFrom and hiredTo:
+        return {
+            "employees": employee_service.list_by_hire_date(
+                hiredFrom.isoformat(),
+                hiredTo.isoformat(),
+            )
+        }
+
     return employee_service.list_all()
 
 
 @router.get("/employees/{employee_id}")
 def get_employee(employee_id: str):
     employee = employee_service.get(employee_id)
-    if employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
+
+    if not employee:
+        raise HTTPException(
+            status_code=404,
+            detail="Employee not found",
+        )
+
     return employee
+
+
+@router.put("/employees/{employee_id}")
+def update_employee(employee_id: str, payload: EmployeeIn):
+    return employee_service.save(
+        employee_id,
+        payload.model_dump(mode="json"),
+    )
