@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import aws_cdk as cdk
+from hr_leave_portal.agent_runtime_stack import AgentRuntimeStack
 from hr_leave_portal.backend_stack import BackendStack
 from hr_leave_portal.notification_stack import NotificationStack
 from hr_leave_portal.state_machine_stack import StateMachineStack
@@ -14,6 +15,15 @@ state_machine = StateMachineStack(
     "HrLeavePortalStateMachine",
     hr_email_topic=notifications.hr_email_topic,
     api_function=backend.api_function
+)
+
+AgentRuntimeStack(
+    app,
+    "HrLeavePortalAgentRuntime",
+    table=backend.table,
+    hr_email_topic=notifications.hr_email_topic,
+    user_pool=backend.user_pool,
+    user_pool_client=backend.user_pool_client
 )
 
 app.synth()
