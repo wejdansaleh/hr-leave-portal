@@ -4,7 +4,8 @@ import os
 import boto3
 from strands import tool
 
-MODEL_ID = "global.anthropic.claude-sonnet-5"
+##MODEL_ID = "global.anthropic.claude-sonnet-5"
+MODEL_ID = "us.amazon.nova-2-lite-v1:0"
 
 bedrock = boto3.client("bedrock-runtime")
 sns = boto3.client("sns")
@@ -37,20 +38,20 @@ def generate_leave_email(
         "Return only the email text, starting with a subject line."
     )
 
-    response = bedrock.invoke_model(
-        modelId=MODEL_ID,
-        body=json.dumps(
-            {
-                "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 1000,
-                # Sonnet 5 thinks by default; a short email doesn't need it.
-                "thinking": {"type": "disabled"},
-                "messages": [{"role": "user", "content": prompt}],
-            }
-        ))
 
-    result = json.loads(response["body"].read())
-    return result["content"][0]["text"]
+    response = bedrock.converse(
+        modelId=MODEL_ID,
+        messages=[
+            {
+                "role": "user",
+                "content": [{"text": prompt}],
+            }
+        ],
+        inferenceConfig={"maxTokens": 1000},
+    )
+
+    return response["output"]["message"]["content"][0]["text"]
+
 
 
 @tool
