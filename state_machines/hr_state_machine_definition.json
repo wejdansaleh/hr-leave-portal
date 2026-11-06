@@ -23,7 +23,7 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::bedrock:invokeModel",
       "Arguments": {
-        "ModelId": "us.amazon.nova-2-lite-v1:0",
+        "ModelId": "global.anthropic.claude-sonnet-5",
         "Body": {
           "messages": [
             {
