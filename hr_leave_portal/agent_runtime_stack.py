@@ -49,6 +49,8 @@ class AgentRuntimeStack(Stack):
                 "HR_EMAIL_TOPIC_ARN": hr_email_topic.topic_arn,
             })
 
+        self.agent_runtime_arn = agent_runtime.agent_runtime_arn
+
         table.grant_read_write_data(agent_runtime.role)
         hr_email_topic.grant_publish(agent_runtime.role)
 
