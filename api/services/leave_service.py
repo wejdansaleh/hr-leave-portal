@@ -35,7 +35,7 @@ def save(employee_id: str, start_date: str, data: dict) -> dict:
         "endDate": data["endDate"],
         "note": data.get("note", ""),
     }
-    table.put_item(Item=item)
+    _get_table().put_item(Item=item)
     return item
 
 
@@ -47,5 +47,5 @@ def list_for_employee(employee_id: str, month: str | None) -> list[dict]:
     if month:
         condition = condition & Key("SK").begins_with(month)
 
-    response = table.query(KeyConditionExpression=condition)
+    response = _get_table().query(KeyConditionExpression=condition)
     return response["Items"]
