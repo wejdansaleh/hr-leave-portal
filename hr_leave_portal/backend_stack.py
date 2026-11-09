@@ -1,7 +1,9 @@
+from typing import Sequence
 
 from aws_cdk import (
     CfnOutput,
     Duration,
+    Fn,
     RemovalPolicy,
     Stack,
     aws_apigateway as apigw,
@@ -21,9 +23,11 @@ class BackendStack(Stack):
         self,
         scope: Construct,
         construct_id: str,
+        allowed_origins: Sequence[str] | None = None,
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
+        origins = list(allowed_origins) if allowed_origins else None
 
         # DynamoDB table
         table = dynamodb.Table(
@@ -88,6 +92,11 @@ class BackendStack(Stack):
             },
         )
 
+        if origins:
+            api_function.add_environment(
+                "ALLOWED_ORIGINS", Fn.join(",", origins)
+            )
+
         table.grant_read_write_data(api_function)
         
 
@@ -124,6 +133,22 @@ class BackendStack(Stack):
         )
 
         # API Gateway
+        cors_headers = [
+            "Authorization",
+            "Content-Type",
+            "X-Amz-Date",
+            "X-Api-Key",
+            "X-Amz-Security-Token",
+        ]
+        cors_kwargs = {}
+        if origins:
+            cors_kwargs["default_cors_preflight_options"] = apigw.CorsOptions(
+                allow_origins=origins,
+                allow_methods=apigw.Cors.ALL_METHODS,
+                allow_headers=cors_headers,
+                max_age=Duration.hours(1),
+            )
+
         api = apigw.LambdaRestApi(
             self,
             "HrApi",
@@ -134,7 +159,26 @@ class BackendStack(Stack):
                     apigw.AuthorizationType.COGNITO
                 ),
             ),
+            **cors_kwargs,
         )
+        self.api = api
+
+        if origins:
+            gateway_headers = {
+                "Access-Control-Allow-Origin": f"'{origins[0]}'",
+                "Access-Control-Allow-Headers": "'" + ",".join(cors_headers) + "'",
+                "Access-Control-Allow-Methods": "'" + ",".join(apigw.Cors.ALL_METHODS) + "'",
+            }
+            api.add_gateway_response(
+                "Default4xx",
+                type=apigw.ResponseType.DEFAULT_4_XX,
+                response_headers=gateway_headers,
+            )
+            api.add_gateway_response(
+                "Default5xx",
+                type=apigw.ResponseType.DEFAULT_5_XX,
+                response_headers=gateway_headers,
+            )
 
         # Stack outputs
         CfnOutput(
