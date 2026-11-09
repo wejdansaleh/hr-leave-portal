@@ -9,6 +9,7 @@ from hr_leave_portal.notification_stack import NotificationStack
 from hr_leave_portal.state_machine_stack import StateMachineStack
 from hr_leave_portal.ui_hosting_stack import UiHostingStack
 from hr_leave_portal.ui_stack import UiStack
+from hr_leave_portal.dashboard_stack import DashboardStack
 
 app = cdk.App()
 
@@ -55,4 +56,7 @@ else:
         file=sys.stderr,
     )
 
+DashboardStack(
+    app, "HrLeavePortalDashboard", api_function=backend.api_function, api=backend.api
+)
 app.synth()
