@@ -8,8 +8,7 @@ from aws_lambda_powertools import Logger, Tracer
 logger = Logger()
 tracer = Tracer()
 
-_table = None
-
+table = boto3.resource("dynamodb").Table(os.environ["TABLE_NAME"])
 
 def _get_table():
     """Resolve the DynamoDB table lazily so a missing TABLE_NAME does not crash import."""
@@ -84,5 +83,5 @@ def save(employee_id: str, data: dict) -> dict:
         "startDate": data["startDate"],
         "role": data.get("role", "employee"),
     }
-    _get_table().put_item(Item=item)
+    table.put_item(Item=item)
     return item
